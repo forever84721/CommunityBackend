@@ -1,0 +1,1 @@
+﻿Scaffold-DbContext "Server=192.168.20.11;Database=Community;User Id=sa;password=P@ssw0rd;MultipleActiveResultSets=True;" Microsoft.EntityFrameworkCore.SqlServer -OutputDir DbModels -Force
