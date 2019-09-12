@@ -2,21 +2,38 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Community.Models.ResponseModels;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Models.ResponseModels;
+using Models.ViewModels;
+using Service.Interface;
 
 namespace Community.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class PostController : ControllerBase
+    public class PostController : BaseController
     {
+        private readonly IPostService postService;
+        public PostController(IPostService postService)
+        {
+            this.postService = postService;
+        }
         [HttpGet("[action]")]
         public BaseResponse<object> Test()
         {
-            return new BaseResponse<object>(true, "Test", null);
+            return new BaseResponse<object>(true, "Test", "123");
         }
-
+        [HttpGet("[action]")]
+        public async Task<BaseResponse<List<PostViewModel>>> GetRandomPost()
+        {
+            BaseResponse<List<PostViewModel>> baseResponse = new BaseResponse<List<PostViewModel>>
+            {
+                Data = await postService.GetRandomPost(),
+                Msg="",
+                Success = true
+            };
+            return baseResponse;
+        }
     }
 }

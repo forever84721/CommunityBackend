@@ -3,9 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Community.DbModels;
 using Community.Middleware;
-using Community.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -16,7 +14,11 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
+using Models.Common;
+using Models.DbModels;
 using Newtonsoft.Json.Serialization;
+using Service.Implement;
+using Service.Interface;
 
 namespace Community
 {
@@ -41,7 +43,7 @@ namespace Community
             AddJWT(services, settings);
             AddDI(services, settings);
 
-            services.AddMvc().AddJsonOptions(options => { options.SerializerSettings.ContractResolver = new DefaultContractResolver(); });
+            //services.AddMvc().AddJsonOptions(options => { options.SerializerSettings.ContractResolver = new DefaultContractResolver(); });
         }
         private static void AddCors(IServiceCollection services)
         {
@@ -81,6 +83,7 @@ namespace Community
         {
             services.AddDbContext<CommunityContext>(options =>
                 options.UseSqlServer(settings.IdentityConnection));
+            services.AddScoped<IPostService, PostService>();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)

@@ -1,5 +1,5 @@
-﻿using Community.Models.ResponseModels;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
+using Models.ResponseModels;
 using Newtonsoft.Json;
 using System;
 using System.Threading.Tasks;

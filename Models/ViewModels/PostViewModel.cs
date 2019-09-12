@@ -1,12 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+using System.Text;
 
-namespace Community.Models.ResponseModels
+namespace Models.ViewModels
 {
     public class PostViewModel
     {
+        public long PostId { get; set; }
+        public int IssuerId { get; set; }
         public string Name { get; set; }
         public DateTime PostTime { get; set; }
         public string Content { get; set; }
