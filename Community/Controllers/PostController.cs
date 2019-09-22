@@ -4,6 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Options;
+using Models.Common;
 using Models.ResponseModels;
 using Models.ViewModels;
 using Service.Interface;
@@ -15,7 +17,7 @@ namespace Community.Controllers
     public class PostController : BaseController
     {
         private readonly IPostService postService;
-        public PostController(IPostService postService)
+        public PostController(IOptions<ApplicationSettings> appSettings, IPostService postService) : base(appSettings)
         {
             this.postService = postService;
         }

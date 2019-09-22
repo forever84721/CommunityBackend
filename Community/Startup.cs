@@ -41,9 +41,9 @@ namespace Community
             services.Configure<ApplicationSettings>(settingsSection);
 
             AddJWT(services, settings);
-            AddDI(services, settings);
+            DependencyInjection(services, settings);
 
-            //services.AddMvc().AddJsonOptions(options => { options.SerializerSettings.ContractResolver = new DefaultContractResolver(); });
+            services.AddMvc().AddJsonOptions(options => { options.SerializerSettings.ContractResolver = new DefaultContractResolver(); });
         }
         private static void AddCors(IServiceCollection services)
         {
@@ -59,6 +59,7 @@ namespace Community
         }
         private static void AddJWT(IServiceCollection services, ApplicationSettings settings)
         {
+
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(settings.JWT_Secret));
             services.AddAuthentication(x =>
             {
@@ -79,11 +80,12 @@ namespace Community
                 };
             });
         }
-        private static void AddDI(IServiceCollection services, ApplicationSettings settings)
+        private static void DependencyInjection(IServiceCollection services, ApplicationSettings settings)
         {
             services.AddDbContext<CommunityContext>(options =>
                 options.UseSqlServer(settings.IdentityConnection));
             services.AddScoped<IPostService, PostService>();
+            services.AddScoped<IUserService, UserService>();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
