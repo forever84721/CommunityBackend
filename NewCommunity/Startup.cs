@@ -1,9 +1,9 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
-using Community.Middleware;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -11,16 +11,18 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Tokens;
 using Models.Common;
 using Models.DbModels;
+using NewCommunity.Common;
+using NewCommunity.Middleware;
 using Newtonsoft.Json.Serialization;
 using Service.Implement;
 using Service.Interface;
 
-namespace Community
+namespace NewCommunity
 {
     public class Startup
     {
@@ -35,18 +37,22 @@ namespace Community
         public void ConfigureServices(IServiceCollection services)
         {
             AddCors(services);
-            services.AddMvc().SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+            //services.AddControllers();
             var settingsSection = Configuration.GetSection("ApplicationSettings");
             var settings = settingsSection.Get<ApplicationSettings>();
             services.Configure<ApplicationSettings>(settingsSection);
 
             AddJWT(services, settings);
             DependencyInjection(services, settings);
-
-            services.AddMvc().AddJsonOptions(options =>
+            services.AddControllers().AddJsonOptions(options =>
             {
-                options.SerializerSettings.ContractResolver = new DefaultContractResolver();
+                options.JsonSerializerOptions.PropertyNamingPolicy = null; //new PascalCase()
             });
+            
+            //services.AddMvc().AddJsonOptions(options =>
+            //{
+            //    options.JsonSerializerOptions.Converters = new DefaultContractResolver();
+            //});
         }
         private static void AddCors(IServiceCollection services)
         {
@@ -91,18 +97,24 @@ namespace Community
             services.AddScoped<IUserService, UserService>();
         }
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             if (env.IsDevelopment())
             {
                 app.UseDeveloperExceptionPage();
             }
+
             app.UseCors("CorsPolicy");
             app.UseMiddleware<ExceptionMiddleware>();
 
+            app.UseRouting();
 
-            app.UseAuthentication();
-            app.UseMvc();
+            app.UseAuthorization();
+
+            app.UseEndpoints(endpoints =>
+            {
+                endpoints.MapControllers();
+            });
         }
     }
 }
