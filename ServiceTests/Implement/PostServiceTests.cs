@@ -8,26 +8,23 @@ using ServiceTests;
 namespace Service.Implement.Tests
 {
     [TestClass()]
-    public class UserServiceTests
+    public class PostServiceTests
     {
         private readonly DependencyResolverHelpercs _serviceProvider;
-        private readonly IUserService userService;
-        
-        public UserServiceTests()
+        private readonly IPostService postService;
+        public PostServiceTests()
         {
             var webHost = WebHost.CreateDefaultBuilder()
                 .UseStartup<Startup>()
                 .Build();
             _serviceProvider = new DependencyResolverHelpercs(webHost);
-
-            userService = _serviceProvider.GetService<IUserService>();
+            postService= _serviceProvider.GetService<IPostService>();
         }
-
         [TestMethod()]
-        public async System.Threading.Tasks.Task LoginTestAsync()
+        public async System.Threading.Tasks.Task GetRandomPostTestAsync()
         {
-            var user = await userService.Login("Jay","asdf");
-            Assert.IsNotNull(user);
+            var postViewModelList = await postService.GetRandomPost();
+            Assert.IsNotNull(postViewModelList);
         }
     }
 }

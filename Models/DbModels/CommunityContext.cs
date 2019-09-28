@@ -15,6 +15,7 @@ namespace Models.DbModels
         {
         }
 
+        public virtual DbSet<Follow> Follow { get; set; }
         public virtual DbSet<Post> Post { get; set; }
         public virtual DbSet<User> User { get; set; }
 
@@ -22,14 +23,19 @@ namespace Models.DbModels
         {
             if (!optionsBuilder.IsConfigured)
             {
-                //#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
-                //optionsBuilder.UseSqlServer("Server=.;Database=Community;User Id=sa;password=P@ssw0rd;MultipleActiveResultSets=True;");
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. See http://go.microsoft.com/fwlink/?LinkId=723263 for guidance on storing connection strings.
+//                optionsBuilder.UseSqlServer("Server=.;Database=Community;User Id=sa;password=P@ssw0rd;MultipleActiveResultSets=True;");
             }
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
+            modelBuilder.Entity<Follow>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.FollowUserId });
+
+                entity.Property(e => e.StartFollowTime).HasColumnType("datetime");
+            });
 
             modelBuilder.Entity<Post>(entity =>
             {
@@ -54,6 +60,10 @@ namespace Models.DbModels
                     .IsRequired()
                     .HasMaxLength(100);
             });
+
+            OnModelCreatingPartial(modelBuilder);
         }
+
+        partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
     }
 }
