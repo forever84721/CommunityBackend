@@ -18,7 +18,6 @@ namespace Service.Implement.Tests
     public class UserServiceTests
     {
         private DependencyResolverHelpercs _serviceProvider;
-
         public UserServiceTests()
         {
             var webHost = WebHost.CreateDefaultBuilder()
