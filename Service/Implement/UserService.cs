@@ -21,6 +21,12 @@ namespace Service.Implement
 
         public async Task<User> Login(string Email, string Password)
         {
+            if (DbContext.IsDead)
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<CommunityContext>();
+                optionsBuilder.UseSqlServer(AppSettings.IdentityConnection);
+                DbContext = new CommunityContext(optionsBuilder.Options);
+            }
             var encryption = Utility.PasswordEncoding(Password);
             return await DbContext.User.Where(u => u.Email.Equals(Email) && u.Password.Equals(encryption)).FirstOrDefaultAsync();
         }

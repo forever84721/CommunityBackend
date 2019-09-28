@@ -9,7 +9,7 @@ namespace Service.Implement
 {
     public class BaseService
     {
-        protected readonly CommunityContext DbContext;
+        protected CommunityContext DbContext;
         protected readonly ApplicationSettings AppSettings;
         public BaseService(CommunityContext dbContext, IOptions<ApplicationSettings> appSettings)
         {

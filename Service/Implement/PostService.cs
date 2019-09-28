@@ -22,9 +22,8 @@ namespace Service.Implement
 
         public async Task<List<PostViewModel>> GetRandomPost()
         {
-            using (var con = new SqlConnection(AppSettings.IdentityConnection))
-            {
-                var result = await con.QueryAsync<PostViewModel>(@"
+            using var con = new SqlConnection(AppSettings.IdentityConnection);
+            var result = await con.QueryAsync<PostViewModel>(@"
 select Post.PostId,
        Post.IssuerId,
        [User].Name,
@@ -37,8 +36,7 @@ from Post
 left join [User] on Post.IssuerId=[User].UserId
 where Post.IssuerId in (select FollowUserId from Follow where UserId=2)
 order by RAND(CHECKSUM(NEWID()))");
-                return result.AsList();
-            }
+            return result.AsList();
         }
     }
 }
