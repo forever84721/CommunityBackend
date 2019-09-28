@@ -30,11 +30,13 @@ select Post.PostId,
        [User].Name,
        Post.PostTime,
        Post.InnerText as Content,
-       ROUND(RAND(CHECKSUM(NEWID()))*100,0) as NumOfLike,
-       ROUND(RAND(CHECKSUM(NEWID()))*100,0) as NumOfComment,
+       ROUND(RAND(CHECKSUM(NEWID()))*2000,0) as NumOfLike,
+       ROUND(RAND(CHECKSUM(NEWID()))*200,0) as NumOfComment,
        ROUND(RAND(CHECKSUM(NEWID()))*100,0) as NumOfShare
 from Post 
-left join [User] on Post.IssuerId=[User].UserId");
+left join [User] on Post.IssuerId=[User].UserId
+where Post.IssuerId in (select FollowUserId from Follow where UserId=2)
+order by RAND(CHECKSUM(NEWID()))");
                 return result.AsList();
             }
         }
