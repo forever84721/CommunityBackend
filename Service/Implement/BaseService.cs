@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Models.Common;
 using Models.DbModels;
 using System;
@@ -15,6 +16,15 @@ namespace Service.Implement
         {
             DbContext = dbContext;
             AppSettings = appSettings.Value;
+        }
+        protected void CheckDbContext()
+        {
+            if (DbContext.IsDead)
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<CommunityContext>();
+                optionsBuilder.UseSqlServer(AppSettings.IdentityConnection);
+                DbContext = new CommunityContext(optionsBuilder.Options);
+            }
         }
     }
 }

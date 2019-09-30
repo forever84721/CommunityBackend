@@ -108,9 +108,10 @@ namespace NewCommunity
             app.UseCors("CorsPolicy");
             app.UseMiddleware<ExceptionMiddleware>();
 
+            app.UseAuthorization();
+            app.UseAuthentication();
             app.UseRouting();
 
-            app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>
             {

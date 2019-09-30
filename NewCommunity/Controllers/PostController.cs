@@ -2,10 +2,12 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Options;
 using Models.Common;
+using Models.RequestModels;
 using Models.ResponseModels;
 using Models.ViewModels;
 using Service.Interface;
@@ -26,10 +28,12 @@ namespace NewCommunity.Controllers
         {
             return new BaseResponse<object>(true, "Test", "123");
         }
+        [Authorize]
         [HttpGet("[action]")]
         public async Task<BaseResponse<List<PostViewModel>>> GetRandomPost()
         {
-            var data = await postService.GetRandomPost();
+            var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId")).FirstOrDefault().Value);
+            var data = await postService.GetRandomPost(UserId);
             BaseResponse<List<PostViewModel>> baseResponse = new BaseResponse<List<PostViewModel>>
             {
                 Data = data,
@@ -38,5 +42,12 @@ namespace NewCommunity.Controllers
             };
             return baseResponse;
         }
+        [HttpPost("[action]")]
+        public async Task<LikePostResult> LikePost(LikePostRequestModel model)
+        {
+            var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId")).FirstOrDefault().Value);
+            return await postService.LikePost(UserId, model.PostId, model.LikeType);
+        }
+        
     }
 }

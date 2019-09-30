@@ -45,8 +45,10 @@ namespace NewCommunity.Controllers
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(AppSettings.JWT_Secret));
             var tokenDescriptor = new SecurityTokenDescriptor
             {
+                //Claims = new Dictionary<string, object> { { "UserId", user.UserId.ToString() }, { "Email", user.Email }, { "Name", user.Name } },
                 Subject = new ClaimsIdentity(new Claim[]
                 {
+                    new Claim("UserId",user.UserId.ToString()),
                     new Claim("Email",user.Email),
                     new Claim("Name",user.Name),
                 }),

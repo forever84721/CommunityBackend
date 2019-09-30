@@ -16,6 +16,7 @@ namespace Models.DbModels
         }
 
         public virtual DbSet<Follow> Follow { get; set; }
+        public virtual DbSet<Like> Like { get; set; }
         public virtual DbSet<Post> Post { get; set; }
         public virtual DbSet<User> User { get; set; }
 
@@ -35,6 +36,13 @@ namespace Models.DbModels
                 entity.HasKey(e => new { e.UserId, e.FollowUserId });
 
                 entity.Property(e => e.StartFollowTime).HasColumnType("datetime");
+            });
+
+            modelBuilder.Entity<Like>(entity =>
+            {
+                entity.HasKey(e => new { e.UserId, e.PostId });
+
+                entity.Property(e => e.LikeTime).HasColumnType("datetime");
             });
 
             modelBuilder.Entity<Post>(entity =>

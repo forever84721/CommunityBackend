@@ -14,5 +14,6 @@ namespace Models.ViewModels
         public int NumOfLike { get; set; }
         public int NumOfComment { get; set; }
         public int NumOfShare { get; set; }
+        public int LikeType { get; set; }
     }
 }

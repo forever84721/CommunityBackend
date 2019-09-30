@@ -1,0 +1,223 @@
+﻿USE [master]
+GO
+/****** Object:  Database [Community]    Script Date: 2019/9/30 下午 11:42:25 ******/
+CREATE DATABASE [Community]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'Community', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\DATA\Community.mdf' , SIZE = 8192KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'Community_log', FILENAME = N'D:\Program Files\Microsoft SQL Server\MSSQL14.MSSQLSERVER\MSSQL\DATA\Community_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+GO
+ALTER DATABASE [Community] SET COMPATIBILITY_LEVEL = 140
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [Community].[dbo].[sp_fulltext_database] @action = 'enable'
+end
+GO
+ALTER DATABASE [Community] SET ANSI_NULL_DEFAULT OFF 
+GO
+ALTER DATABASE [Community] SET ANSI_NULLS OFF 
+GO
+ALTER DATABASE [Community] SET ANSI_PADDING OFF 
+GO
+ALTER DATABASE [Community] SET ANSI_WARNINGS OFF 
+GO
+ALTER DATABASE [Community] SET ARITHABORT OFF 
+GO
+ALTER DATABASE [Community] SET AUTO_CLOSE OFF 
+GO
+ALTER DATABASE [Community] SET AUTO_SHRINK OFF 
+GO
+ALTER DATABASE [Community] SET AUTO_UPDATE_STATISTICS ON 
+GO
+ALTER DATABASE [Community] SET CURSOR_CLOSE_ON_COMMIT OFF 
+GO
+ALTER DATABASE [Community] SET CURSOR_DEFAULT  GLOBAL 
+GO
+ALTER DATABASE [Community] SET CONCAT_NULL_YIELDS_NULL OFF 
+GO
+ALTER DATABASE [Community] SET NUMERIC_ROUNDABORT OFF 
+GO
+ALTER DATABASE [Community] SET QUOTED_IDENTIFIER OFF 
+GO
+ALTER DATABASE [Community] SET RECURSIVE_TRIGGERS OFF 
+GO
+ALTER DATABASE [Community] SET  DISABLE_BROKER 
+GO
+ALTER DATABASE [Community] SET AUTO_UPDATE_STATISTICS_ASYNC OFF 
+GO
+ALTER DATABASE [Community] SET DATE_CORRELATION_OPTIMIZATION OFF 
+GO
+ALTER DATABASE [Community] SET TRUSTWORTHY OFF 
+GO
+ALTER DATABASE [Community] SET ALLOW_SNAPSHOT_ISOLATION OFF 
+GO
+ALTER DATABASE [Community] SET PARAMETERIZATION SIMPLE 
+GO
+ALTER DATABASE [Community] SET READ_COMMITTED_SNAPSHOT OFF 
+GO
+ALTER DATABASE [Community] SET HONOR_BROKER_PRIORITY OFF 
+GO
+ALTER DATABASE [Community] SET RECOVERY FULL 
+GO
+ALTER DATABASE [Community] SET  MULTI_USER 
+GO
+ALTER DATABASE [Community] SET PAGE_VERIFY CHECKSUM  
+GO
+ALTER DATABASE [Community] SET DB_CHAINING OFF 
+GO
+ALTER DATABASE [Community] SET FILESTREAM( NON_TRANSACTED_ACCESS = OFF ) 
+GO
+ALTER DATABASE [Community] SET TARGET_RECOVERY_TIME = 60 SECONDS 
+GO
+ALTER DATABASE [Community] SET DELAYED_DURABILITY = DISABLED 
+GO
+EXEC sys.sp_db_vardecimal_storage_format N'Community', N'ON'
+GO
+ALTER DATABASE [Community] SET QUERY_STORE = OFF
+GO
+USE [Community]
+GO
+/****** Object:  Table [dbo].[Follow]    Script Date: 2019/9/30 下午 11:42:25 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Follow](
+	[UserId] [int] NOT NULL,
+	[FollowUserId] [int] NOT NULL,
+	[StartFollowTime] [datetime] NOT NULL,
+ CONSTRAINT [PK_Follow] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC,
+	[FollowUserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Like]    Script Date: 2019/9/30 下午 11:42:25 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Like](
+	[UserId] [int] NOT NULL,
+	[PostId] [bigint] NOT NULL,
+	[LikeType] [int] NOT NULL,
+	[LikeTime] [datetime] NOT NULL,
+ CONSTRAINT [PK_Like] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC,
+	[PostId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[Post]    Script Date: 2019/9/30 下午 11:42:25 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Post](
+	[PostId] [bigint] IDENTITY(1,1) NOT NULL,
+	[PostTime] [datetime] NOT NULL,
+	[IssuerId] [int] NOT NULL,
+	[InnerText] [nvarchar](max) NOT NULL,
+ CONSTRAINT [PK_Post] PRIMARY KEY CLUSTERED 
+(
+	[PostId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
+GO
+/****** Object:  Table [dbo].[User]    Script Date: 2019/9/30 下午 11:42:25 ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[User](
+	[UserId] [int] NOT NULL,
+	[Email] [nvarchar](100) NOT NULL,
+	[Password] [nvarchar](100) NOT NULL,
+	[Name] [nvarchar](20) NOT NULL,
+ CONSTRAINT [PK_User] PRIMARY KEY CLUSTERED 
+(
+	[UserId] ASC
+)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+INSERT [dbo].[Follow] ([UserId], [FollowUserId], [StartFollowTime]) VALUES (2, 1, CAST(N'2019-09-28T11:54:22.000' AS DateTime))
+GO
+INSERT [dbo].[Follow] ([UserId], [FollowUserId], [StartFollowTime]) VALUES (2, 3, CAST(N'2019-09-28T00:00:00.000' AS DateTime))
+GO
+INSERT [dbo].[Like] ([UserId], [PostId], [LikeType], [LikeTime]) VALUES (2, 4, 1, CAST(N'2019-09-30T18:00:42.383' AS DateTime))
+GO
+INSERT [dbo].[Like] ([UserId], [PostId], [LikeType], [LikeTime]) VALUES (2, 9, 1, CAST(N'2019-09-30T18:00:42.383' AS DateTime))
+GO
+SET IDENTITY_INSERT [dbo].[Post] ON 
+GO
+INSERT [dbo].[Post] ([PostId], [PostTime], [IssuerId], [InnerText]) VALUES (3, CAST(N'2019-08-30T12:04:01.000' AS DateTime), 1, N'#純靠北工程師1um
+別人家的主管：
+客製需求請寫單跟規格書
+我們家的主管：
+線下口頭接單+自己提他自己覺得需要的需求
+📢 匿名發文請至 https://kaobei.engineer/cards/create
+🥙 全平台留言 https://kaobei.engineer/cards/show/2398')
+GO
+INSERT [dbo].[Post] ([PostId], [PostTime], [IssuerId], [InnerText]) VALUES (4, CAST(N'2019-08-30T09:32:35.000' AS DateTime), 1, N'#純靠北工程師1ul
+老闆開公司是在玩遊戲
+
+請工程師是為了解鎖新bug
+
+有錢人的快樂往往就是這麼樸實無華且枯燥
+📢 匿名發文請至 https://kaobei.engineer/cards/create
+🥙 全平台留言 https://kaobei.engineer/cards/show/2397')
+GO
+INSERT [dbo].[Post] ([PostId], [PostTime], [IssuerId], [InnerText]) VALUES (5, CAST(N'2019-08-29T09:46:48.000' AS DateTime), 1, N'#純靠北工程師1uk
+請修復這個Bug
+以解鎖更多Bug
+📢 匿名發文請至 https://kaobei.engineer/cards/create
+🥙 全平台留言 https://kaobei.engineer/cards/show/2396')
+GO
+INSERT [dbo].[Post] ([PostId], [PostTime], [IssuerId], [InnerText]) VALUES (6, CAST(N'2019-08-29T20:24:25.000' AS DateTime), 1, N'#純靠北工程師1uk
+請修復這個Bug
+以解鎖更多Bug
+📢 匿名發文請至 https://kaobei.engineer/cards/create
+🥙 全平台留言 https://kaobei.engineer/cards/show/2396')
+GO
+INSERT [dbo].[Post] ([PostId], [PostTime], [IssuerId], [InnerText]) VALUES (8, CAST(N'2019-08-29T18:38:25.000' AS DateTime), 1, N'#純靠北工程師1uh
+請工程師來
+倒底是來寫程式
+還是來寫故事的...
+📢 匿名發文請至 https://kaobei.engineer/cards/create
+🥙 全平台留言 https://kaobei.engineer/cards/show/2393')
+GO
+INSERT [dbo].[Post] ([PostId], [PostTime], [IssuerId], [InnerText]) VALUES (9, CAST(N'2019-09-28T08:25:22.000' AS DateTime), 3, N'買了台飛機✈️
+專程來美國試飛
+有錢人的快樂
+
+#Twitchcon')
+GO
+INSERT [dbo].[Post] ([PostId], [PostTime], [IssuerId], [InnerText]) VALUES (10, CAST(N'2019-09-27T16:55:23.000' AS DateTime), 3, N'亂玩上路卡薩丁！對線期逆風還可以出疊書？想戳隊友卻戳不到的痛苦！【TOYZ實況精華】
+拜託來看完整版： https://youtu.be/7iaJkLg2Nwc
+訂閱我的頻道：http://bit.ly/2PlgzF9
+－－－－－－－－－－－－－－－－－－
+邏輯鬼才Toyz！精闢點出兩大實況公司問題？
+黛安娜最新出裝法！只需要贏一把就可以剪...嗎？')
+GO
+SET IDENTITY_INSERT [dbo].[Post] OFF
+GO
+INSERT [dbo].[User] ([UserId], [Email], [Password], [Name]) VALUES (1, N'cowbay', N'8OTC92xYkW7CWPJGhRvqCR0U1CR6L8PhhpRGGxgW4Ts=', N'純靠北工程師')
+GO
+INSERT [dbo].[User] ([UserId], [Email], [Password], [Name]) VALUES (2, N'Jay', N'8OTC92xYkW7CWPJGhRvqCR0U1CR6L8PhhpRGGxgW4Ts=', N'Jay')
+GO
+INSERT [dbo].[User] ([UserId], [Email], [Password], [Name]) VALUES (3, N'Toyz', N'8OTC92xYkW7CWPJGhRvqCR0U1CR6L8PhhpRGGxgW4Ts=', N'Toyz')
+GO
+INSERT [dbo].[User] ([UserId], [Email], [Password], [Name]) VALUES (4, N'FuFu', N'8OTC92xYkW7CWPJGhRvqCR0U1CR6L8PhhpRGGxgW4Ts=', N'FuFu')
+GO
+INSERT [dbo].[User] ([UserId], [Email], [Password], [Name]) VALUES (5, N'ettoday', N'8OTC92xYkW7CWPJGhRvqCR0U1CR6L8PhhpRGGxgW4Ts=', N'EtToday')
+GO
+INSERT [dbo].[User] ([UserId], [Email], [Password], [Name]) VALUES (6, N'apple', N'8OTC92xYkW7CWPJGhRvqCR0U1CR6L8PhhpRGGxgW4Ts=', N'Apple')
+GO
+USE [master]
+GO
+ALTER DATABASE [Community] SET  READ_WRITE 
+GO
