@@ -30,12 +30,23 @@ namespace Service.Implement.Tests
         }
 
         [TestMethod()]
-        public async Task LikePostTestAsync()
+        [DataRow(1)]
+        [DataRow(2)]
+        public async Task LikePostTestAsync(int status)
         {
-            var likePostResult = await postService.LikePost(2, 9, 1);
+            var likePostResult = await postService.LikePost(2, 9, status);
             Assert.IsNotNull(likePostResult);
             Assert.IsTrue(likePostResult.Success);
-            Assert.AreEqual(1, likePostResult.Data);
+            Assert.AreEqual(status, likePostResult.Data);
+        }
+        [TestMethod()]
+        [DataRow(3)]
+        public async Task LikePostTestAsync2(int status)
+        {
+            var likePostResult = await postService.LikePost(2, 9, status);
+            Assert.IsNotNull(likePostResult);
+            Assert.IsTrue(likePostResult.Success);
+            Assert.AreEqual(status, likePostResult.Data);
         }
     }
 }
