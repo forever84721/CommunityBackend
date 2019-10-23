@@ -13,10 +13,10 @@ namespace NewCommunity.Controllers
     [ApiController]
     public class BaseController : ControllerBase
     {
-        protected readonly ApplicationSettings AppSettings;
+        internal readonly ApplicationSettings AppSettings;
         public BaseController(IOptions<ApplicationSettings> appSettings)
         {
-            this.AppSettings = appSettings.Value;
+            this.AppSettings = appSettings?.Value;
         }
     }
 }

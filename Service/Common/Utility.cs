@@ -1,12 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 
 namespace Service.Common
 {
-    public class Utility
+    public static class Utility
     {
+        public static void SetCultureInfo()
+        {
+            CultureInfo.CurrentCulture = new CultureInfo("zh-TW");
+            DateTime.Parse("", CultureInfo.CurrentCulture);
+        }
         public static string PasswordEncoding(string Pd)
         {
 #pragma warning disable IDE0067 // 必須在超出範圍前處置物件

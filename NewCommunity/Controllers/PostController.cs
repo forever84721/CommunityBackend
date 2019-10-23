@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -24,7 +26,7 @@ namespace NewCommunity.Controllers
             this.postService = postService;
         }
         [HttpGet("[action]")]
-        public BaseResponse<object> Test()
+        public static BaseResponse<object> Test()
         {
             return new BaseResponse<object>(true, "Test", "123");
         }
@@ -32,8 +34,14 @@ namespace NewCommunity.Controllers
         [HttpGet("[action]")]
         public async Task<BaseResponse<List<PostViewModel>>> GetRandomPost()
         {
-            var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId")).FirstOrDefault().Value);
-            var data = await postService.GetRandomPost(UserId);
+            var options = new JsonSerializerOptions
+            {
+                AllowTrailingCommas = true
+            };
+            JsonSerializer.Deserialize<BaseResponse<int>>("", options);
+            //var asd= JsonSerializer.Parse<BaseResponse<int>>("", options);
+            var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value, CultureInfo.CurrentCulture);
+            var data = await postService.GetRandomPost(UserId).ConfigureAwait(true);
             BaseResponse<List<PostViewModel>> baseResponse = new BaseResponse<List<PostViewModel>>
             {
                 Data = data,
@@ -45,9 +53,13 @@ namespace NewCommunity.Controllers
         [HttpPost("[action]")]
         public async Task<LikePostResult> LikePost(LikePostRequestModel model)
         {
-            var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId")).FirstOrDefault().Value);
-            return await postService.LikePost(UserId, model.PostId, model.LikeType);
+            var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value, CultureInfo.CurrentCulture);
+            if (model == null)
+            {
+                return new LikePostResult(false, "model null", 0);
+            }
+            return await postService.LikePost(UserId, model.PostId, model.LikeType).ConfigureAwait(true);
         }
-        
+
     }
 }

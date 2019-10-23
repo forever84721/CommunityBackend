@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
@@ -35,7 +36,9 @@ namespace NewCommunity.Controllers
                 Msg = "",
                 Success = true
             };
-            var user = await userService.Login(LoginInfo.Email, LoginInfo.Password);
+#pragma warning disable CA1062 // 必須驗證公用方法的引數
+            var user = await userService.Login(LoginInfo.Email, LoginInfo.Password).ConfigureAwait(false);
+#pragma warning restore CA1062 // 必須驗證公用方法的引數
             if (user == null)
             {
                 response.Success = false;
@@ -48,7 +51,7 @@ namespace NewCommunity.Controllers
                 //Claims = new Dictionary<string, object> { { "UserId", user.UserId.ToString() }, { "Email", user.Email }, { "Name", user.Name } },
                 Subject = new ClaimsIdentity(new Claim[]
                 {
-                    new Claim("UserId",user.UserId.ToString()),
+                    new Claim("UserId",user.UserId.ToString(CultureInfo.CurrentCulture)),
                     new Claim("Email",user.Email),
                     new Claim("Name",user.Name),
                 }),

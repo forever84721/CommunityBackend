@@ -19,12 +19,12 @@ namespace NewCommunity.Middleware
         {
             try
             {
-                await _next(context);
+                await _next(context).ConfigureAwait(false);
             }
             catch (Exception ex)
             {
                 await context.Response
-                    .WriteAsync(JsonConvert.SerializeObject(new BaseResponse<object>(false, ex.ToString(), null)));
+                    .WriteAsync(JsonConvert.SerializeObject(new BaseResponse<object>(false, ex.ToString(), null))).ConfigureAwait(false);
             }
         }
     }
