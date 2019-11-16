@@ -26,7 +26,7 @@ namespace NewCommunity.Controllers
             this.postService = postService;
         }
         [HttpGet("[action]")]
-        public static BaseResponse<object> Test()
+        public BaseResponse<object> Test()
         {
             return new BaseResponse<object>(true, "Test", "123");
         }
@@ -34,11 +34,11 @@ namespace NewCommunity.Controllers
         [HttpGet("[action]")]
         public async Task<BaseResponse<List<PostViewModel>>> GetRandomPost()
         {
-            var options = new JsonSerializerOptions
-            {
-                AllowTrailingCommas = true
-            };
-            JsonSerializer.Deserialize<BaseResponse<int>>("", options);
+            //var options = new JsonSerializerOptions
+            //{
+            //    AllowTrailingCommas = true
+            //};
+            //JsonSerializer.Deserialize<BaseResponse<int>>("", options);
             //var asd= JsonSerializer.Parse<BaseResponse<int>>("", options);
             var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value, CultureInfo.CurrentCulture);
             var data = await postService.GetRandomPost(UserId).ConfigureAwait(true);
