@@ -26,19 +26,20 @@ namespace NewCommunity.Controllers
             this.postService = postService;
         }
         [HttpGet("[action]")]
-        public static BaseResponse<object> Test()
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Performance", "CA1822:Mark members as static", Justification = "<暫止>")]
+        public BaseResponse<object> Test()
         {
-            return new BaseResponse<object>(true, "Test", "123");
+            return new BaseResponse<object>(true, "Test", "1234");
         }
         [Authorize]
         [HttpGet("[action]")]
         public async Task<BaseResponse<List<PostViewModel>>> GetRandomPost()
         {
-            var options = new JsonSerializerOptions
-            {
-                AllowTrailingCommas = true
-            };
-            JsonSerializer.Deserialize<BaseResponse<int>>("", options);
+            //var options = new JsonSerializerOptions
+            //{
+            //    AllowTrailingCommas = true
+            //};
+            //JsonSerializer.Deserialize<BaseResponse<int>>("", options);
             //var asd= JsonSerializer.Parse<BaseResponse<int>>("", options);
             var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value, CultureInfo.CurrentCulture);
             var data = await postService.GetRandomPost(UserId).ConfigureAwait(true);
@@ -50,16 +51,28 @@ namespace NewCommunity.Controllers
             };
             return baseResponse;
         }
+        [Authorize]
         [HttpPost("[action]")]
         public async Task<LikePostResult> LikePost(LikePostRequestModel model)
         {
             var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value, CultureInfo.CurrentCulture);
             if (model == null)
             {
-                return new LikePostResult(false, "model null", 0);
+                return new LikePostResult(false, "model null", new LikePostResponseModel(0, 0));
             }
             return await postService.LikePost(UserId, model.PostId, model.LikeType).ConfigureAwait(true);
         }
 
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<BaseResponse<List<ReplyViewModel>>> GetReply(GetReplyRequestModel model)
+        {
+            if (model == null)
+            {
+                return new BaseResponse<List<ReplyViewModel>>(false, "model null", null);
+            }
+            var response = await postService.GetReply(model.PostId, model.Page).ConfigureAwait(true);
+            return response;
+        }
     }
 }

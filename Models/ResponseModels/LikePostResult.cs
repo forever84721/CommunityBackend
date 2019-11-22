@@ -4,13 +4,13 @@ using System.Text;
 
 namespace Models.ResponseModels
 {
-    public class LikePostResult : BaseResponse<int>
+    public class LikePostResult : BaseResponse<LikePostResponseModel>
     {
         public LikePostResult() : base()
         {
 
         }
-        public LikePostResult(bool success, string msg, int n) : base(success, msg, n)
+        public LikePostResult(bool success, string msg, LikePostResponseModel n) : base(success, msg, n)
         {
 
         }

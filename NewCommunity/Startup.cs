@@ -18,6 +18,7 @@ using Microsoft.IdentityModel.Tokens;
 using Models.Common;
 using Models.DbModels;
 using NewCommunity.Common;
+using NewCommunity.Hubs;
 using NewCommunity.Middleware;
 using Newtonsoft.Json.Serialization;
 using Service.Implement;
@@ -38,7 +39,7 @@ namespace NewCommunity
         public void ConfigureServices(IServiceCollection services)
         {
             AddCors(services);
-            //services.AddControllers();
+
             var settingsSection = Configuration.GetSection("ApplicationSettings");
             var settings = settingsSection.Get<ApplicationSettings>();
             services.Configure<ApplicationSettings>(settingsSection);
@@ -49,7 +50,7 @@ namespace NewCommunity
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null; //new PascalCase()
             });
-
+            services.AddSignalR();
             //services.AddMvc().AddJsonOptions(options =>
             //{
             //    options.JsonSerializerOptions.Converters = new DefaultContractResolver();
@@ -62,9 +63,11 @@ namespace NewCommunity
                 options.AddPolicy(
                     "CorsPolicy",
                     builder => builder
-                        .AllowAnyOrigin()
+                        .WithOrigins("http://localhost:8081")
+                        //.AllowAnyOrigin()
                         .AllowAnyHeader()
-                        .AllowAnyMethod());
+                        .AllowAnyMethod()
+                        .AllowCredentials());
             });
         }
         private static void AddJWT(IServiceCollection services, ApplicationSettings settings)
@@ -106,17 +109,26 @@ namespace NewCommunity
             }
 
             app.UseCors("CorsPolicy");
+            //app.UseCors(builder => builder
+            //  .AllowAnyHeader()
+            //  .AllowAnyMethod()
+            //  .SetIsOriginAllowed((host) => true)
+            //  .AllowCredentials()
+            //);
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseAuthorization();
             app.UseAuthentication();
             app.UseRouting();
 
+            //app.UseSignalR(x=> { });
 
             app.UseEndpoints(endpoints =>
             {
                 endpoints.MapControllers();
+                endpoints.MapHub<ChatHub>("/api/chatHub");
             });
+
         }
     }
 }

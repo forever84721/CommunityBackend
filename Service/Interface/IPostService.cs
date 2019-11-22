@@ -12,5 +12,7 @@ namespace Service.Interface
     {
         Task<List<PostViewModel>> GetRandomPost(int UserId);
         Task<LikePostResult> LikePost(int UserId, long PostId, int LikeType);
+        Task<BaseResponse<List<ReplyViewModel>>> GetReply(long PostId,int Page);
+        //Task<LikePostResult> Reply(int UserId, long PostId, int LikeType);
     }
 }
