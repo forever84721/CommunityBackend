@@ -19,7 +19,7 @@ namespace Service.Implement
 {
     public class PostService : BaseService, IPostService
     {
-        //private static Semaphore replySemaphore = new Semaphore(1, 1);
+        private static readonly Semaphore ReplySemaphore = new Semaphore(1, 1);
         public PostService(CommunityContext dbContext, IOptions<ApplicationSettings> appSettings) : base(dbContext, appSettings)
         {
 
@@ -109,6 +109,26 @@ FETCH NEXT 20 ROWS ONLY", new { PostId, Page })).ToList();
             catch (Exception ex)
             {
                 return new BaseResponse<List<ReplyViewModel>>(false, ex.Message, null);
+            }
+        }
+        public async Task<BaseResponse<int>> Reply(int UserId, int ReplyType, long TargetId, string Content)
+        {
+            try
+            {
+                ReplySemaphore.WaitOne();
+                using var con = new SqlConnection(AppSettings.IdentityConnection);
+                await con.OpenAsync();
+                int NewId = await con.QuerySingleAsync<int>("select Max(PostReplyId)+1 from PostReply");
+                con.Execute("insert into PostReply values(@NewId,@ReplyType,@TargetId,GetDate(),@UserId,@Content)", new { NewId, ReplyType, TargetId, UserId, Content });
+                return new BaseResponse<int>(true, "", 0);
+            }
+            catch (Exception ex)
+            {
+                return new BaseResponse<int>(false, ex.Message, 0);
+            }
+            finally
+            {
+                ReplySemaphore.Release();
             }
         }
     }

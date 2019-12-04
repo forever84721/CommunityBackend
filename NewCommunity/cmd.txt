@@ -2,3 +2,28 @@
   SP_LOCK
   Kill 58
   openssl pkcs12 -export -in certificate.crt -inkey private.key  -certfile ca_bundle.crt -out sample.pfx
+
+  select name from sysdatabases (nolock) where name='XXXXXXX'
+
+ 
+
+DROP DATABASE WebPOS
+
+ 
+
+select  d.name , convert (smallint, req_spid) As spid
+      from master.dbo.syslockinfo l, 
+           master.dbo.spt_values v,
+           master.dbo.spt_values x, 
+           master.dbo.spt_values u, 
+           master.dbo.sysdatabases d
+      where   l.rsc_type = v.number 
+      and v.type = 'LR' 
+      and l.req_status = x.number 
+      and x.type = 'LS' 
+      and l.req_mode + 1 = u.number
+      and u.type = 'L' 
+      and l.rsc_dbid = d.dbid 
+      and rsc_dbid = (select top 1 dbid from 
+                      master..sysdatabases 
+                      where name like 'WebPOS')

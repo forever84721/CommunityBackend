@@ -42,7 +42,7 @@ namespace NewCommunity.Controllers
             //JsonSerializer.Deserialize<BaseResponse<int>>("", options);
             //var asd= JsonSerializer.Parse<BaseResponse<int>>("", options);
             var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value, CultureInfo.CurrentCulture);
-            var data = await postService.GetRandomPost(UserId).ConfigureAwait(true);
+            var data = await postService.GetRandomPost(UserId).ConfigureAwait(false);
             BaseResponse<List<PostViewModel>> baseResponse = new BaseResponse<List<PostViewModel>>
             {
                 Data = data,
@@ -60,7 +60,7 @@ namespace NewCommunity.Controllers
             {
                 return new LikePostResult(false, "model null", new LikePostResponseModel(0, 0));
             }
-            return await postService.LikePost(UserId, model.PostId, model.LikeType).ConfigureAwait(true);
+            return await postService.LikePost(UserId, model.PostId, model.LikeType).ConfigureAwait(false);
         }
 
         [Authorize]
@@ -71,7 +71,19 @@ namespace NewCommunity.Controllers
             {
                 return new BaseResponse<List<ReplyViewModel>>(false, "model null", null);
             }
-            var response = await postService.GetReply(model.PostId, model.Page).ConfigureAwait(true);
+            var response = await postService.GetReply(model.PostId, model.Page).ConfigureAwait(false);
+            return response;
+        }
+        [Authorize]
+        [HttpPost("[action]")]
+        public async Task<BaseResponse> Reply(ReplyRequestModel model)
+        {
+            if (model == null)
+            {
+                return new BaseResponse(false, "model null");
+            }
+            var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value, CultureInfo.CurrentCulture);
+            var response = await postService.Reply(UserId,model.ReplyType, model.TargetId, model.Content).ConfigureAwait(false);
             return response;
         }
     }

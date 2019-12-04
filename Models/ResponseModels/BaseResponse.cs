@@ -4,7 +4,22 @@ using System.Text;
 
 namespace Models.ResponseModels
 {
-    public class BaseResponse<T>
+    public class BaseResponse
+    {
+        public BaseResponse()
+        {
+            Success = false;
+            Msg = null;
+        }
+        public BaseResponse(bool success, string msg)
+        {
+            Success = success;
+            Msg = msg;
+        }
+        public bool Success { get; set; }
+        public string Msg { get; set; }
+    }
+    public class BaseResponse<T>: BaseResponse
     {
         public BaseResponse()
         {
@@ -18,8 +33,6 @@ namespace Models.ResponseModels
             Msg = msg;
             Data = data;
         }
-        public bool Success { get; set; }
-        public string Msg { get; set; }
         public T Data { get; set; }
     }
 }
