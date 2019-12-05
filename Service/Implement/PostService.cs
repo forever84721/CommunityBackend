@@ -29,13 +29,13 @@ namespace Service.Implement
         {
             using var con = new SqlConnection(AppSettings.IdentityConnection);
             var result = await con.QueryAsync<PostViewModel>(@"
-select Post.PostId,
+select top 10 Post.PostId,
        Post.IssuerId,
        [User].Name,
        Post.PostTime,
        Post.InnerText as Content,
        (select count(1) from [Like] where Post.PostId=[Like].PostId and [Like].UserId=2)+ROUND(RAND(CHECKSUM(NEWID()))*2000,0) as NumOfLike,
-       ROUND(RAND(CHECKSUM(NEWID()))*200,0) as NumOfComment,
+       (select count(1) from PostReply where TargetId=Post.PostId) as NumOfComment,
        ROUND(RAND(CHECKSUM(NEWID()))*100,0) as NumOfShare,
 	   isnull((select top 1 LikeType from [Like] where Post.PostId=[Like].PostId and [Like].UserId=@UserId),0) as LikeType
 from Post 
