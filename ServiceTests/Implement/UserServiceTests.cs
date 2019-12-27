@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NewCommunity;
-using Service.Interface;
+using Service.ServiceInterface;
 using ServiceTests;
 
 namespace Service.Implement.Tests
@@ -26,7 +26,7 @@ namespace Service.Implement.Tests
         [TestMethod()]
         public async System.Threading.Tasks.Task LoginTestAsync()
         {
-            var user = await userService.Login("Jay","asdf");
+            var user = await userService.Login("Jay","asdf").ConfigureAwait(false);
             Assert.IsNotNull(user);
         }
     }

@@ -3,7 +3,7 @@ using Microsoft.Extensions.Options;
 using Models.Common;
 using Models.DbModels;
 using Service.Common;
-using Service.Interface;
+using Service.ServiceInterface;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -23,7 +23,7 @@ namespace Service.Implement
         {
             CheckDbContext();
             var encryption = Utility.PasswordEncoding(Password);
-            return await DbContext.User.Where(u => u.Email.Equals(Email) && u.Password.Equals(encryption)).FirstOrDefaultAsync();
+            return await DbContext.User.Where(u => u.Email.Equals(Email, StringComparison.OrdinalIgnoreCase) && u.Password.Equals(encryption, StringComparison.OrdinalIgnoreCase)).FirstOrDefaultAsync().ConfigureAwait(false);
         }
     }
 }

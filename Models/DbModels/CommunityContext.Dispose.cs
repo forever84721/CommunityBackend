@@ -12,6 +12,7 @@ namespace Models.DbModels
         {
             IsDead = true;
             base.Dispose();
+            GC.SuppressFinalize(this);
         }
     }
 }

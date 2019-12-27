@@ -12,7 +12,7 @@ using Models.Common;
 using Models.RequestModels;
 using Models.ResponseModels;
 using Models.ViewModels;
-using Service.Interface;
+using Service.ServiceInterface;
 
 namespace NewCommunity.Controllers
 {
@@ -32,8 +32,8 @@ namespace NewCommunity.Controllers
             return new BaseResponse<object>(true, "Test", "1234");
         }
         [Authorize]
-        [HttpGet("[action]")]
-        public async Task<BaseResponse<List<PostViewModel>>> GetRandomPost()
+        [HttpGet("[action]/{Page}")]
+        public async Task<BaseResponse<List<PostViewModel>>> GetRandomPost(int Page)
         {
             //var options = new JsonSerializerOptions
             //{
@@ -42,7 +42,7 @@ namespace NewCommunity.Controllers
             //JsonSerializer.Deserialize<BaseResponse<int>>("", options);
             //var asd= JsonSerializer.Parse<BaseResponse<int>>("", options);
             var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value, CultureInfo.CurrentCulture);
-            var data = await postService.GetRandomPost(UserId).ConfigureAwait(false);
+            var data = await postService.GetRandomPost(UserId, Page).ConfigureAwait(false);
             BaseResponse<List<PostViewModel>> baseResponse = new BaseResponse<List<PostViewModel>>
             {
                 Data = data,
@@ -83,7 +83,7 @@ namespace NewCommunity.Controllers
                 return new BaseResponse(false, "model null");
             }
             var UserId = int.Parse(User.Claims.Where(c => c.Type.Equals("UserId", StringComparison.OrdinalIgnoreCase)).FirstOrDefault().Value, CultureInfo.CurrentCulture);
-            var response = await postService.Reply(UserId,model.ReplyType, model.TargetId, model.Content).ConfigureAwait(false);
+            var response = await postService.Reply(UserId, model.ReplyType, model.TargetId, model.Content).ConfigureAwait(false);
             return response;
         }
     }

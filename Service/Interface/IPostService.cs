@@ -6,11 +6,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Service.Interface
+namespace Service.ServiceInterface
 {
     public interface IPostService
     {
-        Task<List<PostViewModel>> GetRandomPost(int UserId);
+        Task<List<PostViewModel>> GetRandomPost(int UserId,int Page);
         Task<LikePostResult> LikePost(int UserId, long PostId, int LikeType);
         Task<BaseResponse<List<ReplyViewModel>>> GetReply(long PostId,int Page);
         Task<BaseResponse<int>> Reply(int UserId, int ReplyType, long TargetId, string Content);

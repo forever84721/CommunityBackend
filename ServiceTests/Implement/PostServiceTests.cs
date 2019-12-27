@@ -3,7 +3,7 @@ using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using NewCommunity;
-using Service.Interface;
+using Service.ServiceInterface;
 using ServiceTests;
 using System.Threading.Tasks;
 
@@ -25,7 +25,7 @@ namespace Service.Implement.Tests
         [TestMethod()]
         public async Task GetRandomPostTestAsync()
         {
-            var postViewModelList = await postService.GetRandomPost(2);
+            var postViewModelList = await postService.GetRandomPost(2).ConfigureAwait(false);
             Assert.IsNotNull(postViewModelList);
         }
 
@@ -34,7 +34,7 @@ namespace Service.Implement.Tests
         [DataRow(2)]
         public async Task LikePostTestAsync(int status)
         {
-            var likePostResult = await postService.LikePost(2, 9, status);
+            var likePostResult = await postService.LikePost(2, 9, status).ConfigureAwait(false);
             Assert.IsNotNull(likePostResult);
             Assert.IsTrue(likePostResult.Success);
             Assert.AreEqual(status, likePostResult.Data);
@@ -43,7 +43,7 @@ namespace Service.Implement.Tests
         [DataRow(3)]
         public async Task LikePostTestAsync2(int status)
         {
-            var likePostResult = await postService.LikePost(2, 9, status);
+            var likePostResult = await postService.LikePost(2, 9, status).ConfigureAwait(false);
             Assert.IsNotNull(likePostResult);
             Assert.IsTrue(likePostResult.Success);
             Assert.AreEqual(status, likePostResult.Data);

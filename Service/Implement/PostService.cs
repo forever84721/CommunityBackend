@@ -5,7 +5,7 @@ using Models.Common;
 using Models.DbModels;
 using Models.ResponseModels;
 using Models.ViewModels;
-using Service.Interface;
+using Service.ServiceInterface;
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
@@ -25,24 +25,28 @@ namespace Service.Implement
 
         }
 
-        public async Task<List<PostViewModel>> GetRandomPost(int UserId)
+        public async Task<List<PostViewModel>> GetRandomPost(int UserId, int Page)
         {
             using var con = new SqlConnection(AppSettings.IdentityConnection);
             var result = await con.QueryAsync<PostViewModel>(@"
-select top 10 Post.PostId,
+select -DATEDIFF(HH ,PostTime,GETDATE())*30+NumOfLike+NumOfComment*2+NumOfShare+3 as Hot,* from (
+select 
+	   Post.PostId,
        Post.IssuerId,
        [User].Name,
        Post.PostTime,
        Post.InnerText as Content,
-       (select count(1) from [Like] where Post.PostId=[Like].PostId and [Like].UserId=2)+ROUND(RAND(CHECKSUM(NEWID()))*2000,0) as NumOfLike,
+       (select count(1) from [Like] where Post.PostId=[Like].PostId and [Like].UserId=2)+ROUND(RAND(CHECKSUM(NEWID()))*20000,0) as NumOfLike,
        (select count(1) from PostReply where TargetId=Post.PostId) as NumOfComment,
        ROUND(RAND(CHECKSUM(NEWID()))*100,0) as NumOfShare,
 	   isnull((select top 1 LikeType from [Like] where Post.PostId=[Like].PostId and [Like].UserId=@UserId),0) as LikeType
-from Post 
+from Post
 left join [User] on Post.IssuerId=[User].UserId
 left join [Like] on Post.PostId=[Like].PostId and [Like].UserId=@UserId
-where Post.IssuerId in (select FollowUserId from Follow where UserId=@UserId)
-order by RAND(CHECKSUM(NEWID()))", new { UserId });
+where Post.IssuerId in (select FollowUserId from Follow where UserId=@UserId)) b
+order by Hot desc
+OFFSET @Offset ROWS
+FETCH NEXT 10 ROWS ONLY", new { UserId, Offset = (Page - 1) * 10 }).ConfigureAwait(false);
             return result.AsList();
         }
 
@@ -53,7 +57,7 @@ order by RAND(CHECKSUM(NEWID()))", new { UserId });
             try
             {
                 //using TransactionScope ts = new TransactionScope(TransactionScopeOption.Required, new TransactionOptions() { IsolationLevel = IsolationLevel.ReadUncommitted });
-                var likeInstance = await DbContext.Like.SingleOrDefaultAsync(a => a.PostId == PostId && a.UserId == UserId);
+                var likeInstance = await DbContext.Like.SingleOrDefaultAsync(a => a.PostId == PostId && a.UserId == UserId).ConfigureAwait(false);
 
                 var num = DbContext.Like.Where(a => a.PostId == PostId).Count();
                 if (likeInstance == null)
@@ -81,7 +85,7 @@ order by RAND(CHECKSUM(NEWID()))", new { UserId });
                     }
                 }
                 result.Data = new LikePostResponseModel(LikeType, num);
-                await DbContext.SaveChangesAsync();
+                await DbContext.SaveChangesAsync().ConfigureAwait(false);
                 result.Success = true;
             }
             catch (Exception ex)
@@ -103,7 +107,7 @@ left join [User] on IssuerId=UserId
 where ReplyType=1 and TargetId = @PostId
 order by PostTime desc
 OFFSET (@Page-1)*20 ROWS
-FETCH NEXT 20 ROWS ONLY", new { PostId, Page })).ToList();
+FETCH NEXT 20 ROWS ONLY", new { PostId, Page }).ConfigureAwait(false)).ToList();
                 return new BaseResponse<List<ReplyViewModel>>(true, "", result);
             }
             catch (Exception ex)
@@ -117,8 +121,8 @@ FETCH NEXT 20 ROWS ONLY", new { PostId, Page })).ToList();
             {
                 ReplySemaphore.WaitOne();
                 using var con = new SqlConnection(AppSettings.IdentityConnection);
-                await con.OpenAsync();
-                int NewId = await con.QuerySingleAsync<int>("select Max(PostReplyId)+1 from PostReply");
+                await con.OpenAsync().ConfigureAwait(false);
+                int NewId = await con.QuerySingleAsync<int>("select Max(PostReplyId)+1 from PostReply").ConfigureAwait(false);
                 con.Execute("insert into PostReply values(@NewId,@ReplyType,@TargetId,GetDate(),@UserId,@Content)", new { NewId, ReplyType, TargetId, UserId, Content });
                 return new BaseResponse<int>(true, "", 0);
             }

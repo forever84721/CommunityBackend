@@ -22,7 +22,7 @@ using NewCommunity.Hubs;
 using NewCommunity.Middleware;
 using Newtonsoft.Json.Serialization;
 using Service.Implement;
-using Service.Interface;
+using Service.ServiceInterface;
 
 namespace NewCommunity
 {
@@ -117,11 +117,9 @@ namespace NewCommunity
             //);
             app.UseMiddleware<ExceptionMiddleware>();
 
+            app.UseRouting();
             app.UseAuthorization();
             app.UseAuthentication();
-            app.UseRouting();
-
-            //app.UseSignalR(x=> { });
 
             app.UseEndpoints(endpoints =>
             {

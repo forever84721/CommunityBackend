@@ -13,7 +13,7 @@ using Microsoft.IdentityModel.Tokens;
 using Models.Common;
 using Models.DbModels;
 using Models.ResponseModels;
-using Service.Interface;
+using Service.ServiceInterface;
 
 namespace NewCommunity.Controllers
 {

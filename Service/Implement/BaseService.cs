@@ -8,14 +8,14 @@ using System.Text;
 
 namespace Service.Implement
 {
-    public class BaseService
+    public class BaseService : IDisposable
     {
-        protected CommunityContext DbContext;
-        protected readonly ApplicationSettings AppSettings;
+        internal CommunityContext DbContext;
+        internal readonly ApplicationSettings AppSettings;
         public BaseService(CommunityContext dbContext, IOptions<ApplicationSettings> appSettings)
         {
             DbContext = dbContext;
-            AppSettings = appSettings.Value;
+            AppSettings = appSettings?.Value;
         }
         protected void CheckDbContext()
         {
@@ -25,6 +25,32 @@ namespace Service.Implement
                 optionsBuilder.UseSqlServer(AppSettings.IdentityConnection);
                 DbContext = new CommunityContext(optionsBuilder.Options);
             }
+        }
+
+        ~BaseService()
+        {
+            Dispose(false);
+        }
+        public void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        protected virtual void Dispose(bool disposedValue)
+        {
+            if (!disposedValue)
+            {
+                //disposedValue = true;
+                if (DbContext != null)
+                {
+                    DbContext.Dispose();
+                    // TODO: 處置 Managed 狀態 (Managed 物件)。
+                    // 例如，可以將綁定的事件解除
+                }
+                // TODO: 釋放 Unmanaged 資源 (Unmanaged 物件) 並覆寫下方的完成項。
+                // TODO: 將大型欄位設為 null。
+            }
+            //Win32.DestroyHandle(this.CursorFileBitmapIconServiceHandle);
         }
     }
 }
