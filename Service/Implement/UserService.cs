@@ -19,11 +19,13 @@ namespace Service.Implement
 
         }
 
-        public async Task<User> Login(string Email, string Password)
+        public Task<User> Login(string Email, string Password)
         {
             CheckDbContext();
             var encryption = Utility.PasswordEncoding(Password);
-            return await DbContext.User.Where(u => u.Email.Equals(Email, StringComparison.OrdinalIgnoreCase) && u.Password.Equals(encryption, StringComparison.OrdinalIgnoreCase)).FirstOrDefaultAsync().ConfigureAwait(false);
+            //var a = DbContext.User.Single(u => u.Email == Email);
+            return DbContext.User.SingleOrDefaultAsync(u => u.Email == Email && u.Password == encryption);
+            //return await DbContext.User.Where(u => u.Email.Equals(Email, StringComparison.OrdinalIgnoreCase) && u.Password.Equals(encryption, StringComparison.OrdinalIgnoreCase)).FirstOrDefaultAsync().ConfigureAwait(false);
         }
     }
 }

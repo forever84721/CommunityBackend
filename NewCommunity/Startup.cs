@@ -118,8 +118,8 @@ namespace NewCommunity
             app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseRouting();
-            app.UseAuthorization();
             app.UseAuthentication();
+            app.UseAuthorization();//先驗證、再授權
 
             app.UseEndpoints(endpoints =>
             {

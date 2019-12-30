@@ -25,7 +25,7 @@ namespace Service.Implement.Tests
         [TestMethod()]
         public async Task GetRandomPostTestAsync()
         {
-            var postViewModelList = await postService.GetRandomPost(2).ConfigureAwait(false);
+            var postViewModelList = await postService.GetRandomPost(2,1).ConfigureAwait(false);
             Assert.IsNotNull(postViewModelList);
         }
 
