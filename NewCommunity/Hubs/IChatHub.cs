@@ -7,6 +7,6 @@ namespace NewCommunity.Hubs
 {
     public interface IChatHub
     {
-        Task ServerMessage(string message);
+        Task ServerMessage(MessageInfo message);
     }
 }

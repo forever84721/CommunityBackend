@@ -50,7 +50,10 @@ namespace NewCommunity
             {
                 options.JsonSerializerOptions.PropertyNamingPolicy = null; //new PascalCase()
             });
-            services.AddSignalR();
+            services.AddSignalR().AddJsonProtocol(options =>
+            {
+                options.PayloadSerializerOptions.PropertyNamingPolicy = null;
+            });
             //services.AddMvc().AddJsonOptions(options =>
             //{
             //    options.JsonSerializerOptions.Converters = new DefaultContractResolver();
@@ -107,7 +110,7 @@ namespace NewCommunity
             {
                 app.UseDeveloperExceptionPage();
             }
-
+            app.UseRouting();
             app.UseCors("CorsPolicy");
             //app.UseCors(builder => builder
             //  .AllowAnyHeader()

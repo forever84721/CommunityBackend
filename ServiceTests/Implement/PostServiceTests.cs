@@ -37,7 +37,7 @@ namespace Service.Implement.Tests
             var likePostResult = await postService.LikePost(2, 9, status).ConfigureAwait(false);
             Assert.IsNotNull(likePostResult);
             Assert.IsTrue(likePostResult.Success);
-            Assert.AreEqual(status, likePostResult.Data);
+            Assert.AreEqual(status, likePostResult.Data.NewType);
         }
         [TestMethod()]
         [DataRow(3)]
@@ -46,7 +46,7 @@ namespace Service.Implement.Tests
             var likePostResult = await postService.LikePost(2, 9, status).ConfigureAwait(false);
             Assert.IsNotNull(likePostResult);
             Assert.IsTrue(likePostResult.Success);
-            Assert.AreEqual(status, likePostResult.Data);
+            Assert.AreEqual(status, likePostResult.Data.NewType);
         }
     }
 }
